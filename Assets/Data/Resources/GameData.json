@@ -1,0 +1,95 @@
+{
+    "Off": "10/10/2025 10:09:31 PM",
+    "BagItemList": [
+        {
+            "Id": "2",
+            "Name": "Tomato",
+            "ProductType": 1,
+            "Amount": 10
+        },
+        {
+            "Id": "3",
+            "Name": "Blueberry",
+            "ProductType": 2,
+            "Amount": 10
+        },
+        {
+            "Id": "4",
+            "Name": "Strawberry",
+            "ProductType": 3,
+            "Amount": 0
+        },
+        {
+            "Id": "5",
+            "Name": "Cow",
+            "ProductType": 4,
+            "Amount": 2
+        }
+    ],
+    "SellItemList": [
+        {
+            "Id": "1",
+            "Name": "Tomato",
+            "ProductType": 1,
+            "Amount": 10
+        },
+        {
+            "Id": "2",
+            "Name": "Blueberry",
+            "ProductType": 2,
+            "Amount": 4
+        },
+        {
+            "Id": "3",
+            "Name": "Strawberry",
+            "ProductType": 3,
+            "Amount": 0
+        },
+        {
+            "Id": "4",
+            "Name": "Cow",
+            "ProductType": 4,
+            "Amount": 9
+        }
+    ],
+    "PlotList": [
+        {
+            "Id": "0",
+            "Type": 0,
+            "Status": 1,
+            "CurTime": -1.0,
+            "CurLife": -1,
+            "CurAmount": 0,
+            "Deadline": "1/1/0001 12:00:00 AM",
+            "WorkerId": -1
+        },
+        {
+            "Id": "1",
+            "Type": 1,
+            "Status": 2,
+            "CurTime": 7.0,
+            "CurLife": 0,
+            "CurAmount": 0,
+            "Deadline": "1/1/0001 12:00:00 AM",
+            "WorkerId": -1
+        },
+        {
+            "Id": "2",
+            "Type": 1,
+            "Status": 2,
+            "CurTime": 7.0,
+            "CurLife": 1,
+            "CurAmount": 1,
+            "Deadline": "1/1/0001 12:00:00 AM",
+            "WorkerId": -1
+        }
+    ],
+    "WorkerList": [
+        {
+            "Id": "0",
+            "State": 1,
+            "PlotId": 0,
+            "CurTime": 0
+        }
+    ]
+}

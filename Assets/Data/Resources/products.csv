@@ -1,0 +1,5 @@
+id,name,interval,lifetime,cost,price,pack_size,deadline
+1,Tomato,10,2,30,5,1,15
+2,Blueberry,20,2,50,8,1,15
+3,Strawberry,35,2,400,10,10,10
+4,Cow,5,3,100,15,1,10
