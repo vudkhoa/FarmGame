@@ -17,7 +17,7 @@
     - [OffGame_CheckWorking](#offgame_checkworking)
     - [GetPlotListFromOldData (Trong PlotController.cs)](#getplotlistfromolddata-trong-plotcontrollercs)
     - [FillToPlot (Trong WorkerController.cs)](#filltoplot-trong-workercontrollercs)
-  - [Link Build](link-build)
+  - [Link Build](#link-build)
 
 
 ## Contributors
