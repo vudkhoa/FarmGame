@@ -5,7 +5,6 @@ using Data.Game;
 using Data.Manager;
 using Plots.Controller;
 using Product.Controller;
-using Sell.Controller;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,11 +19,6 @@ namespace Bag.Controller
         public RectTransform ParentBagView;
         public List<BagModel> BagModelList;
 
-        private void Start()
-        {
-            this.Init();
-            SellController.Instance.Init();
-        }
 
         public void Init()
         {
@@ -57,6 +51,7 @@ namespace Bag.Controller
         {
             if (this.BagModelList[id].ProductAmount <= 0)
             {
+                //Debug.Log(this.BagModelList[id] + " " + this.BagModelList[id].ProductName);
                 return;
             }
 
@@ -69,10 +64,10 @@ namespace Bag.Controller
             {
                 indexPlot = idPlot;
             }
-
+            Debug.Log("Plot Index: " +  indexPlot);
             if (indexPlot == -1) { return; }
             PlotController.Instance.SetPlotByIndex(indexPlot, this.BagModelList[id].ProductType);
-            this.BagModelList[id].ReduceAmount(1);
+            this.BagModelList[id].CaculateAmount(-1);
         }
 
         public int ChooseProduct()
@@ -86,6 +81,54 @@ namespace Bag.Controller
                 }
             }
             return -1;
+        }
+
+        public void CaculateProductAmountByName(string name, int value)
+        {
+            int index = -1;
+            foreach (BagModel model in this.BagModelList)
+            {
+                index++;
+                if (string.Equals(model.ProductName.ToString(), name.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    this.BagModelList[index++].CaculateAmount(value);
+                    return;
+                }
+            }
+        }
+
+        private void FillOffset()
+        {
+
+        }
+
+        public int GetIndex(ProductType type)
+        {
+            int index = -1;
+            foreach (BagModel model in this.BagModelList)
+            {
+                index++;
+                if (model.ProductType == type)
+                {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
+        public void SaveData()
+        {
+            DataManager.Instance.GameData.BagItemList.Clear();
+
+            foreach (BagModel model in this.BagModelList)
+            {
+                ItemDetail bagItem = new ItemDetail();
+                bagItem.Id = model.Id.ToString();
+                bagItem.ProductType = model.ProductType;
+                bagItem.Name = model.ProductName;
+                bagItem.Amount = model.ProductAmount;
+                DataManager.Instance.GameData.BagItemList.Add(bagItem);
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using Game.Manager;
 using Plots.Controller;
 using Product.Controller;
 using System;
@@ -14,9 +15,11 @@ namespace Data.Game
         public List<ItemDetail> SellItemList;
         public List<PlotDetail> PlotList;
         public List<WorkerDetail> WorkerList;
+        public PlayerDetail Player;
+        public EquipmentDetail Equipment;
     }
 
-    [Serializable] 
+    [Serializable]
     public class ItemDetail
     {
         public string Id;
@@ -29,7 +32,7 @@ namespace Data.Game
     public class PlotDetail
     {
         public string Id;
-        public ProductType Type;
+        public ProductType ProductType;
         public PlotStatus Status;
         public float CurTime;
         public int CurLife;
@@ -42,6 +45,7 @@ namespace Data.Game
             this.CurTime = -1;
             this.CurLife = -1;
             this.WorkerId = -1;
+            this.Status = PlotStatus.IsAvai;
             this.Deadline = DateTime.MinValue.ToString();
         }
     }
@@ -51,7 +55,48 @@ namespace Data.Game
     {
         public string Id;
         public WorkerState State;
-        public int PlotId;
-        public int CurTime;
+        public int IdPlot;
+        public int IdProduct;
+        public string StartTime;
+        public bool NotExcute;
+
+        public WorkerDetail()
+        {
+            this.IdPlot = -1;
+            this.IdProduct = -1;
+            this.StartTime = DateTime.MinValue.ToString();
+            this.State = WorkerState.Idle;
+            this.NotExcute = false;
+        }
+    }
+
+    [Serializable]
+    public class PlayerDetail
+    {
+        public int Gold;
+        public PlayerDetail()
+        {
+            this.Gold = 0;
+        }
+    }
+
+    [Serializable]
+    public class ShopItemDetail
+    {
+        public int Id;
+        public string NameProduct;
+        public int Price;
+        public int PackSize;
+    }
+
+    [Serializable]
+    public class EquipmentDetail
+    {
+        public int CurrentLevel;
+
+        public EquipmentDetail() 
+        {
+            this.CurrentLevel = 1;
+        }
     }
 }

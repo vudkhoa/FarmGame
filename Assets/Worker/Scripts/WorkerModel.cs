@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Utils.DesignPattern.State;
 using Worker.Controller;
 
@@ -15,18 +16,11 @@ namespace Worker.Model
         public DateTime StartTime;
         public bool NotExecute;
 
+        public CancellationTokenSource WorkCts;
+
+        public Task CurrentTask;
+
         // State
         public StateMachine<WorkerModel> StateMachine = new();
-        //public CancellationTokenSource CancelSource { get; set; }
-
-        //public void StopWork()
-        //{
-        //    if (this.CancelSource != null)
-        //    {
-        //        this.CancelSource.Cancel();
-        //        this.CancelSource.Dispose();
-        //        this.CancelSource = null;
-        //    }
-        //}
     }
 }

@@ -2,6 +2,7 @@ using Bag.Controller;
 using Bag.Model;
 using Data.Game;
 using Data.Manager;
+using Player.Controller;
 using Product.Controller;
 using Sell.Model;
 using Sell.View;
@@ -23,8 +24,10 @@ namespace Sell.Controller
         public void Init()
         {
             this.SellModelList = new List<SellModel>();
+            int index = -1;
             foreach (BagModel bagItem in BagController.Instance.BagModelList) 
             {
+                index++;
                 SellModel sellModel = new SellModel();
                 SellItemView view = Instantiate(this.SellItemPrefab, this.ParentAllSellItem);
 
@@ -38,15 +41,17 @@ namespace Sell.Controller
                 }
 
                 sellItem.Name = bagItem.ProductName;
-                sellItem.Id = bagItem.Id.ToString();
+                sellItem.Id = index.ToString();
                 sellItem.ProductType = bagItem.ProductType;
 
-                sellModel.Setup(sellItem, view);
+                int price = DataManager.Instance.GameConfig.ProductConfigList[index].Price;
+
+                sellModel.Setup(sellItem, view, price);
                 SellModelList.Add(sellModel);
             }
         }
 
-        public int FindByProductType(ProductType type)
+        public int FindIndexByProductType(ProductType type)
         {
             int count = -1;
             foreach (SellModel model in this.SellModelList)
@@ -60,9 +65,18 @@ namespace Sell.Controller
             return -1;
         }
 
-        public void IncreaseByIndex(int index, int value)
+        public void CaculateAmountByIndex(int index, int value)
         {
             this.SellModelList[index].CaculateAmount(value);
+        }
+
+        public void SellItem(int index)
+        {
+            Debug.Log("Sell: " + this.SellModelList[index].ProductAmount);
+            if (this.SellModelList[index].ProductAmount <= 0) return;
+            PlayerController.Instance.CaculateGold(this.SellModelList[index].ProductAmount * 
+                                                    this.SellModelList[index].Price);
+            this.SellModelList[index].CaculateAmount(-this.SellModelList[index].ProductAmount);
         }
     
         public void SaveData()

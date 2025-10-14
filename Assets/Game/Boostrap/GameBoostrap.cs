@@ -1,11 +1,14 @@
-﻿using Data.Config;
+﻿using Bag.Controller;
+using Data.Config;
 using Data.Manager;
+using Player.Controller;
 using Plots.Controller;
 using Sell.Controller;
 using System.IO;
 using UnityEngine;
 using Utils.CsvTool;
 using Utils.DesignPattern.Singleton;
+using Worker.Controller;
 
 namespace Game.Boostrap
 {
@@ -19,13 +22,9 @@ namespace Game.Boostrap
         {
             base.Awake();
 
-            #if UNITY_EDITOR
-                    // Editor: save directly in Assets/Data/Resources.
-                    string folderPath = Path.Combine(Application.dataPath, "Data", "Resources");
-            #else
-                    // Build: dùng persistentDataPath
-                    string folderPath = Path.Combine(Application.persistentDataPath, "Data");
-            #endif
+            // Editor: save directly in Assets/Data/Resources.
+            string folderPath = Path.Combine(Application.dataPath, "Data", "Resources");
+            
             // Ensure the folder exists
             if (!Directory.Exists(folderPath))
             {
@@ -51,6 +50,9 @@ namespace Game.Boostrap
         {
             PlotController.Instance.SaveData();
             SellController.Instance.SaveData();
+            WorkerController.Instance.SaveData();
+            BagController.Instance.SaveData();
+            PlayerController.Instance.SaveData();
             DataManager.Instance.SetDateTimeOff();
             string json = DataManager.Instance.ConverData_GameToJson();
             File.WriteAllText(FilePath, json);

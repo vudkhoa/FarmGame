@@ -10,14 +10,14 @@ namespace Utils.DesignPattern.State
             Current?.Enter(owner);
         }
 
-        public void Execute(TOwner owner)
+        public void Execute(TOwner owner, float offset = 0)
         {
-            Current?.Execute(owner);
+            Current?.Execute(owner, offset);
         }
-
-        public void Exit(TOwner owner)
+    
+        public void CancelNow(TOwner owner)
         {
-            Current?.Exit(owner);
+            Current?.CancelNow(owner);
         }
     }
 }

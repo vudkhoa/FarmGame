@@ -1,4 +1,5 @@
 using Bag.Controller;
+using Sell.Controller;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,9 +14,8 @@ namespace Sell.View
 
         [Header(" Name Text")]
         [SerializeField] private TextMeshProUGUI nameText;
-
-        [Header(" Amount Text ")]
         [SerializeField] private TextMeshProUGUI amountText;
+        [SerializeField] private TextMeshProUGUI priceText;
 
         [Header(" Running Game ")]
         public int Id;
@@ -30,10 +30,11 @@ namespace Sell.View
             button.onClick.RemoveListener(OnClickButton);
         }
 
-        public void Init(string name, int amount, int id)
+        public void Init(string name, int amount, int id, int price)
         {
             this.SetName(name);
             this.SetAmount(amount);
+            this.SetPrice(price);
             this.Id = id;
         }
 
@@ -47,9 +48,14 @@ namespace Sell.View
             this.amountText.text = amount.ToString();
         }
 
+        public void SetPrice(int price)
+        {
+            this.priceText.text = price.ToString(); 
+        }
+
         private void OnClickButton()
         {
-
+            SellController.Instance.SellItem(this.Id);
         }
     }
 }

@@ -3,7 +3,6 @@ using Plots.Controller;
 using Plots.View;
 using Product.Controller;
 using System;
-using System.Diagnostics;
 
 namespace Plots.Model
 {
@@ -23,20 +22,21 @@ namespace Plots.Model
             this.Data = plot;
             this.View = view;
             this.id = id;
+            UnityEngine.Debug.Log(this.id);
 
             // View
             this.View.Show();
             this.View.SetAvai(false);
             this.View.SetResetData(false);
             this.View.SetId(id);
-            this.View.SetProductType(this.Data.Type);
+            this.View.SetProductType(this.Data.ProductType);
             this.View.Setup(0f, 0, this.Data.CurAmount);
         }
 
         public void Setup(ProductType type, int interval, int lifetime)
         {
             // Data
-            this.Data.Type = type;
+            this.Data.ProductType = type;
             this.Interval = interval;
             this.Lifetime = lifetime;
 
@@ -44,7 +44,7 @@ namespace Plots.Model
             this.View.Show();
             float timeView = this.Interval - this.Data.CurTime;
             int lifeView = this.Lifetime - this.Data.CurLife;
-            this.View.SetProductType(this.Data.Type);
+            this.View.SetProductType(this.Data.ProductType);
             this.View.Setup(timeView, lifeView, this.Data.CurAmount);
             this.View.SetAvai(true);
             this.View.SetResetData(false);
@@ -68,15 +68,19 @@ namespace Plots.Model
             this.View.Setup(timeView, lifeView, this.Data.CurAmount);
         }
 
-        public void ResetData()
+        public void ResetData(bool haveView = true)
         {
             this.Data.CurLife = -1;
             this.Data.CurTime = -1;
-            this.View.SetResetData(true);
-            this.View.ResetData();
+            if (haveView)
+            {
+                this.View.SetResetData(true);
+                this.View.ResetData();
+            }
+            
         }
     
-        public void SetNullData()
+        public void SetNullData(bool haveView = true)
         {
             string id = this.Data.Id;
             this.Data = new PlotDetail();
@@ -86,7 +90,11 @@ namespace Plots.Model
             this.Data.Status = PlotStatus.IsAvai;
             this.Interval = 0;
             this.Lifetime = 0;
-            this.View.SetNullView();
+
+            if (haveView)
+            {
+                this.View.SetNullView();
+            }
         }
 
         public void ReduceAmount(int value)

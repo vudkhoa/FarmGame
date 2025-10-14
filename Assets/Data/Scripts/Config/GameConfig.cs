@@ -9,6 +9,8 @@ namespace Data.Config
     {
         public List<ProductConfig> ProductConfigList;
         public WorkerConfig WorkerConfig;
+        public EquipmentConfig EquipmentConfig;
+        public PlotConfig PlotConfig;
     }
 
     [Serializable]
@@ -33,6 +35,23 @@ namespace Data.Config
         public int PackSize;
     }
 
+    [Serializable]
+    public class EquipmentConfig
+    {
+        public float Percent;
+        public int LimitLevel;
+        public int PackSize;
+        public int Cost;
+    }
+
+    [Serializable]
+    public class PlotConfig
+    {
+        public int Cost;
+        public int PackSize;
+    }
+
+
     public class ConfigDatabase
     {
         public Dictionary<string, ProductConfig> ProductList { get; set; } = new(StringComparer.OrdinalIgnoreCase);
@@ -44,5 +63,9 @@ namespace Data.Config
         public Dictionary<string, WorkerDetail> WorkerInitList { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
         public WorkerConfig WorkerConfig { get; set; }
+
+        public EquipmentConfig EquipmentConfig { get; set; }
+
+        public PlotConfig PlotConfig { get; set; }
     }
 }

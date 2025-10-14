@@ -1,4 +1,3 @@
-using Bag.Controller;
 using Bag.View;
 using Data.Game;
 using Product.Controller;
@@ -23,11 +22,12 @@ namespace Bag.Model
             this.View.Init(this.ProductName, this.ProductAmount, this.Id);
         }
     
-        public void ReduceAmount(int value)
+        public void CaculateAmount(int value)
         {
-            if (this.ProductAmount <= 0) return;
+            int amount = this.ProductAmount + value;
+            if (amount < 0) return;
 
-            this.ProductAmount -= value;
+            this.ProductAmount = amount;
             this.View.SetAmount(this.ProductAmount);
         }
     }

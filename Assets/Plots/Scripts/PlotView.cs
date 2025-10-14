@@ -1,12 +1,10 @@
-using Bag.Controller;
 using Plots.Controller;
 using Product.Controller;
 using System;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Worker.Model;
 
 namespace Plots.View
 {
@@ -66,6 +64,7 @@ namespace Plots.View
             if (DateTime.Parse(PlotController.Instance.PlotModelList[this.id].Data.Deadline) < DateTime.Now &&
                 DateTime.Parse(PlotController.Instance.PlotModelList[this.id].Data.Deadline) != DateTime.MinValue)
             {
+                Debug.Log(DateTime.Parse(PlotController.Instance.PlotModelList[this.id].Data.Deadline));
                 this.DeleteProductoOnPlot();
                 return;
             }
@@ -101,6 +100,7 @@ namespace Plots.View
 
         private void DeleteProductoOnPlot()
         {
+            Debug.Log("Delete: " + this.id);
             PlotController.Instance.SetNullById(this.id);
         }
 
@@ -139,5 +139,6 @@ namespace Plots.View
         {
             PlotController.Instance.MoveToSell(this.id);
         }
+
     }
 }

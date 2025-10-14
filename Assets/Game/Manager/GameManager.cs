@@ -1,10 +1,11 @@
+using Game.Boostrap;
 using System;
 using UnityEngine;
 using Utils.DesignPattern.Singleton;
-using Game.Boostrap;
 
 namespace Game.Manager
 {
+
     public class GameManager : SingletonMono<GameManager>
     {
         public GameState State;
@@ -15,14 +16,17 @@ namespace Game.Manager
             InitController();
             GameBoostrap.Instance.LoadAllData();
         }
-
         private void InitController()
         {
+            CreateModule("DataManager", "DataManager");
             CreateModule("UIManager", "UIManager");
-            CreateModule("BagController", "BagController");
-            CreateModule("SellController", "SellController");
+            CreateModule("EquipmentController", "EquipmentController");
+            CreateModule("ShopController", "ShopController");
+            CreateModule("PlayerController", "PlayerController");
             CreateModule("PlotController", "PlotController");
             CreateModule("WorkerController", "WorkerController");
+            CreateModule("BagController", "BagController");
+            CreateModule("SellController", "SellController");
         }
 
         private GameObject CreateModule(string module, string nameModule)
@@ -31,16 +35,6 @@ namespace Game.Manager
             loginObject.name = nameModule;
 
             return loginObject;
-        }
-
-        public void PauseGame()
-        {
-            this.State = GameState.Pause;
-        }
-
-        public void ResumeGame()
-        {
-            this.State = GameState.Playing;
         }
 
         private void OnApplicationQuit()

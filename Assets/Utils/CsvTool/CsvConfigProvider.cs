@@ -5,6 +5,7 @@ using Data.Game;
 using System;
 using Product.Controller;
 using Plots.Controller;
+using UnityEngine;
 
 namespace Utils.CsvTool
 {
@@ -15,18 +16,45 @@ namespace Utils.CsvTool
         public static ConfigDatabase LoadFromFolder(string folderPath)
         {
             db = new ConfigDatabase();
-            LoadDataProductConfig(folderPath);
-            LoadDataResourceInit(folderPath);
-            LoadDataWorkerConfig(folderPath);
+
+            LoadProductConfig();
+            LoadResourcesInit();
+            LoadWorkerConfig();
+            LoadEquipmentConfig();
+            LoadPlotConfig();
             return db;
         }
 
-        private static void LoadDataProductConfig(string folderPath)
+        public static void LoadProductConfig()
         {
-            List<ProductConfig> productConfigList = new List<ProductConfig>();
-            var productsPath = Path.Combine(folderPath, "products.csv");
-            foreach (var r in CsvTool.Read(productsPath))
+            TextAsset csvData = Resources.Load<TextAsset>("products");
+            if (csvData == null)
             {
+                Debug.LogError("No Found products.csv!");
+                return;
+            }
+
+            StringReader reader = new StringReader(csvData.text);
+
+            string headerLine = reader.ReadLine();
+            string[] headers = headerLine.Split(',');
+
+            List<ProductConfig> productConfigList = new List<ProductConfig>();
+
+
+            while (reader.Peek() > -1)
+            {
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+
+                if (values.Length != headers.Length) continue;
+
+                Dictionary<string, string> r = new Dictionary<string, string>();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    r[headers[i]] = values[i];
+                }
+
                 ProductConfig product = new ProductConfig
                 {
                     Id = r["id"],
@@ -43,25 +71,48 @@ namespace Utils.CsvTool
             }
         }
 
-        private static void LoadDataResourceInit(string folderPath)
-        {
-            var resourcesInitPath = Path.Combine(folderPath, "resources_init.csv");
-            foreach (var r in CsvTool.Read(resourcesInitPath))
+        public static void LoadResourcesInit()
+        { 
+            TextAsset csvData = Resources.Load<TextAsset>("resources_init");
+            if (csvData == null)
             {
-                if (Enum.TryParse(r["name"].ToString(), out ProductType productType))
+                Debug.LogError("No Found resources_init.csv!");
+                return;
+            }
+
+            StringReader reader = new StringReader(csvData.text);
+
+            string headerLine = reader.ReadLine();
+            string[] headers = headerLine.Split(',');
+
+            while (reader.Peek() > -1)
+            {
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+
+                if (values.Length != headers.Length) continue;
+
+                Dictionary<string, string> entry = new Dictionary<string, string>();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    entry[headers[i]] = values[i];
+                }
+
+                string nameKey = entry["name"];
+                if (Enum.TryParse(nameKey.ToString(), out ProductType productType))
                 {
                     ItemDetail bagInit = new ItemDetail
                     {
-                        Id = r["id"],
-                        Name = r["name"],
+                        Id = entry["id"],
+                        Name = entry["name"],
                         ProductType = productType,
-                        Amount = int.Parse(r["amount"])
+                        Amount = int.Parse(entry["amount"])
                     };
                     db.BagInitList[bagInit.Id] = bagInit;
                 }
-                else if (r["name"].ToString() == "Plots")
+                else if (entry["name"].ToString() == "Plots")
                 {
-                    for (int i = 0; i < int.Parse(r["amount"]); i++)
+                    for (int i = 0; i < int.Parse(entry["amount"]); i++)
                     {
                         PlotDetail plot = new PlotDetail();
                         plot.Id = i.ToString();
@@ -73,7 +124,7 @@ namespace Utils.CsvTool
                 }
                 else
                 {
-                    for (int i = 0; i < int.Parse(r["amount"]); i++)
+                    for (int i = 0; i < int.Parse(entry["amount"]); i++)
                     {
                         WorkerDetail worker = new WorkerDetail();
                         worker.Id = i.ToString();
@@ -82,23 +133,117 @@ namespace Utils.CsvTool
                     }
                 }
             }
-
         }
     
-        private static void LoadDataWorkerConfig(string folderPath)
+        public static void LoadWorkerConfig()
         {
-            List<WorkerConfig> workerConfigList = new List<WorkerConfig>();
-            string workerConfigPath = Path.Combine(folderPath, "worker.csv");
-            foreach (var read in CsvTool.Read(workerConfigPath))
+            TextAsset csvData = Resources.Load<TextAsset>("worker");
+            if (csvData == null)
             {
+                Debug.LogError("No Found worker.csv!");
+                return;
+            }
+
+            StringReader reader = new StringReader(csvData.text);
+
+            string headerLine = reader.ReadLine();
+            string[] headers = headerLine.Split(',');
+
+            while (reader.Peek() > -1)
+            {
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+
+                if (values.Length != headers.Length) continue;
+
+                Dictionary<string, string> r = new Dictionary<string, string>();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    r[headers[i]] = values[i];
+                }
+
                 WorkerConfig worker = new WorkerConfig
                 {
-                    Name = read["name"],
-                    TimeTask = int.Parse(read["time_task"]),
-                    Cost = int.Parse(read["cost"]),
-                    PackSize = int.Parse(read["pack_size"])
+                    Name = r["name"],
+                    TimeTask = int.Parse(r["time_task"]),
+                    Cost = int.Parse(r["cost"]),
+                    PackSize = int.Parse(r["pack_size"])
                 };
                 db.WorkerConfig = worker;
+            }
+        }
+
+        public static void LoadEquipmentConfig()
+        {
+            TextAsset csvData = Resources.Load<TextAsset>("equipment");
+            if (csvData == null)
+            {
+                Debug.LogError("No Found equipment.csv!");
+                return;
+            }
+
+            StringReader reader = new StringReader(csvData.text);
+
+            string headerLine = reader.ReadLine();
+            string[] headers = headerLine.Split(',');
+
+            while (reader.Peek() > -1)
+            {
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+
+                if (values.Length != headers.Length) continue;
+
+                Dictionary<string, string> r = new Dictionary<string, string>();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    r[headers[i]] = values[i];
+                }
+
+                EquipmentConfig equipment = new EquipmentConfig
+                {
+                    Percent = float.Parse(r["percent"]),
+                    LimitLevel = int.Parse(r["limit_level"]),
+                    PackSize = int.Parse(r["pack_size"]),
+                    Cost = int.Parse(r["cost"])
+                };
+                db.EquipmentConfig = equipment;
+            }
+        }
+
+        public static void LoadPlotConfig()
+        {
+            TextAsset csvData = Resources.Load<TextAsset>("plot");
+            if (csvData == null)
+            {
+                Debug.LogError("No Found plot.csv!");
+                return;
+            }
+
+            StringReader reader = new StringReader(csvData.text);
+
+            string headerLine = reader.ReadLine();
+            string[] headers = headerLine.Split(',');
+
+            while (reader.Peek() > -1)
+            {
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+
+                if (values.Length != headers.Length) continue;
+
+                Dictionary<string, string> r = new Dictionary<string, string>();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    r[headers[i]] = values[i];
+                }
+
+                PlotConfig plot = new PlotConfig
+                {
+                    Cost = int.Parse(r["cost"]),
+                    PackSize = int.Parse(r["pack_size"]),
+                };
+                db.PlotConfig = plot;
             }
         }
     }
