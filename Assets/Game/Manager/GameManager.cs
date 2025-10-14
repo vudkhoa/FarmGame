@@ -5,7 +5,6 @@ using Utils.DesignPattern.Singleton;
 
 namespace Game.Manager
 {
-
     public class GameManager : SingletonMono<GameManager>
     {
         public GameState State;
@@ -14,7 +13,7 @@ namespace Game.Manager
         {
             GameModeContainer.Instance.InitGame();
             InitController();
-            GameBoostrap.Instance.LoadAllData();
+            GameBootstrap.Instance.LoadAllData();
         }
         private void InitController()
         {
@@ -39,7 +38,7 @@ namespace Game.Manager
 
         private void OnApplicationQuit()
         {
-            GameBoostrap.Instance.SaveAllData();
+            GameBootstrap.Instance.SaveAllData();
         }
 
         public double GetDistanceWithNow(DateTime time)

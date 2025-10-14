@@ -47,9 +47,9 @@ namespace Data.Manager
             this.GameConfig.PlotConfig = DB.PlotConfig;
 
             // Read Init Resource or null
-            if (File.Exists(GameBoostrap.Instance.FilePath))
+            if (File.Exists(GameBootstrap.Instance.FilePath))
             {
-                Json = File.ReadAllText(GameBoostrap.Instance.FilePath);
+                Json = File.ReadAllText(GameBootstrap.Instance.FilePath);
                 this.GameData = JsonUtility.FromJson<GameData>(Json);
             }
             else

@@ -12,7 +12,7 @@ using Worker.Controller;
 
 namespace Game.Boostrap
 {
-    public class GameBoostrap : SingletonMono<GameBoostrap>
+    public class GameBootstrap : SingletonMono<GameBootstrap>
     {
         [Header(" Running Game ")]
         public string FilePath;

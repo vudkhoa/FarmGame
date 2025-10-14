@@ -55,7 +55,6 @@ namespace Shop.Controller
                 item.InitDataView(index);
                 this.ShopItemList.Add(item);
 
-                //Debug.Log(item.Data.NameProduct);
             }
             // worker
             WorkerConfig workerConfig = new WorkerConfig();
@@ -121,7 +120,6 @@ namespace Shop.Controller
             {
                 string name = this.ShopItemList[index].Data.NameProduct;
                 int packSize = this.ShopItemList[index].Data.PackSize;
-                Debug.Log($"{name} {packSize}");
                 if (string.Equals(name, "Worker".ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     WorkerDetail worker = new WorkerDetail();
@@ -152,7 +150,6 @@ namespace Shop.Controller
 
                     PlotModel model = new PlotModel();
                     plot.Id = count.ToString();
-                    //Debug.Log(plot.Id);
 
                     PlotView view = Instantiate(PlotController.Instance.PlotPrefab, PlotController.Instance.ParentAllView);
                     model.Init(plot, view, count);

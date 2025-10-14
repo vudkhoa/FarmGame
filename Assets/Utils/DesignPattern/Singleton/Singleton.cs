@@ -10,7 +10,6 @@ namespace Utils.DesignPattern.Singleton
             if (Instance == null)
             {
                 Instance = this as T;
-                //DontDestroyOnLoad(gameObject); 
             }
             else
             {
