@@ -17,6 +17,7 @@
     - [OffGame_CheckWorking](#offgame_checkworking)
     - [GetPlotListFromOldData (Trong PlotController.cs)](#getplotlistfromolddata-trong-plotcontrollercs)
     - [FillToPlot (Trong WorkerController.cs)](#filltoplot-trong-workercontrollercs)
+  - [Link Build](link-build)
 
 
 ## Contributors
@@ -201,7 +202,8 @@ Nếu **không có ca thu hoạch khẩn cấp**, worker sẽ thử thực hiệ
   <img width="806" height="362" alt="image" src="https://github.com/user-attachments/assets/dbc2d013-185e-4b11-89c9-004bb89f0f81" /> </br>
   <img width="841" height="650" alt="image" src="https://github.com/user-attachments/assets/d84a5d6d-5143-4e3f-9242-9c7941a0e8b4" /> </br>
   <img width="563" height="332" alt="image" src="https://github.com/user-attachments/assets/7c704fde-7e8f-4d8a-a0ba-fb7074484d57" /> </br>
-
+## Link Build
+[Build](https://drive.google.com/drive/folders/1q-hbo9AgN4NwjPlr4B_b9DzpRyxr4SS_)
 
 
 
