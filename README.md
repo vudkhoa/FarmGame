@@ -72,36 +72,43 @@
 
 ## UI MANAGER
 >> - API generic, type-safe mở UI
->> <img width="338" height="176" alt="image" src="https://github.com/user-attachments/assets/ca7997d9-cb0c-4ae4-a659-d443c8d13e62" />
+>> <img width="365" height="258" alt="image" src="https://github.com/user-attachments/assets/444ecc9f-95d7-4c55-b1a1-a50b1345e978" />
+
 API generic OpenUI<T>(): khởi tạo nếu chưa có, setup và mở UI theo đúng vòng đời.
 
 >> - Kho single-instance theo Type
->> <img width="756" height="62" alt="image" src="https://github.com/user-attachments/assets/d2d4f827-eafa-4995-82db-33b5aa7afe61" />
+>> <img width="789" height="102" alt="image" src="https://github.com/user-attachments/assets/2263daeb-1531-49ea-b86a-6b8e678dc319" />
+
 Mỗi loại UI chỉ có một instance đang dùng, tra cứu O(1) theo Type.
 
 >> - Lazy instantiate + gán parent chuẩn
->> <img width="562" height="230" alt="image" src="https://github.com/user-attachments/assets/d9e4a27d-0c3f-420c-a82e-bf02fe1f3a8c" />
+>> <img width="612" height="268" alt="image" src="https://github.com/user-attachments/assets/9daa732c-884d-4b4f-85f1-c6ee37f391b6" />
+
 Chỉ tạo khi cần, tự động đặt đúng CanvasParentTF.
 
 >> - Cache prefab + quét thư mục chuẩn
->> <img width="490" height="442" alt="image" src="https://github.com/user-attachments/assets/667fe6f3-5935-4878-a209-bb00ed5af48b" />
+>> <img width="542" height="492" alt="image" src="https://github.com/user-attachments/assets/51256426-2497-43d1-ad81-ff93edad936f" />
+
 Cache prefab theo Type, chuẩn hóa tài nguyên dưới Resources/UI/.
 
 >> - Back stack theo LIFO + lấy top
->> <img width="475" height="248" alt="image" src="https://github.com/user-attachments/assets/137cc5dc-9154-4afd-8da7-a52539ff36ae" />
+>> <img width="426" height="269" alt="image" src="https://github.com/user-attachments/assets/b14f55c1-9c75-459a-a2ef-712cf754a673" />
+
 Luôn thao tác với top.
 
 >> - API đăng ký/huỷ back & quản lý stack
->> <img width="516" height="394" alt="image" src="https://github.com/user-attachments/assets/9b23757e-0230-49db-b08c-ca0b4b5d0da9" />
+>> <img width="535" height="425" alt="image" src="https://github.com/user-attachments/assets/62feeb71-7f7c-4f68-9fb1-2b366bbbba69" />
+
 Tự khai báo hành vi Back và tự tham gia/ra khỏi stack.
 
 ## UI CANVAS
 >> - Tự đăng ký Back & vào stack khi setup
->> <img width="493" height="146" alt="image" src="https://github.com/user-attachments/assets/742d0773-5bd9-45d3-83e8-4970fe267db4" />
+>> <img width="448" height="117" alt="image" src="https://github.com/user-attachments/assets/fed3f42f-6eee-4b20-9352-58a089bf99b1" />
+
 Mặc định mỗi UI có Back riêng (BackKey) và vào back stack.
 
 >> - API mở/đóng mặc định, đơn giản mà đủ </br>
->> <img width="482" height="490" alt="image" src="https://github.com/user-attachments/assets/68f56919-e4c0-411d-ab71-ab3815c51702" /> </br>
+>> <img width="512" height="568" alt="image" src="https://github.com/user-attachments/assets/be8211dd-2e5c-4216-98cd-f7658c640651" /> </br>
 
 ## CsvConfigLoader.cs
 1. Nạp file CSV thành TextAsset từ thư mục Resources.
