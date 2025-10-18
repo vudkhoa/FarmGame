@@ -120,7 +120,7 @@ Mặc định mỗi UI có Back riêng (BackKey) và vào back stack.
 
 ## Optional: ScriptableObject
 1. Quản lý bởi DataManager.cs: </br>
-> <img width="572" height="151" alt="image" src="https://github.com/user-attachments/assets/45b9598b-5de5-498f-b816-f212692b3ede" /> </br>
+> <img width="687" height="182" alt="image" src="https://github.com/user-attachments/assets/991ad16e-fa31-4707-a103-bfd460f136a1" /> </br>
 2. Demo
 - Product Data: </br>
 > <img width="728" height="524" alt="image" src="https://github.com/user-attachments/assets/78dc40c0-7295-42fa-8472-71124369142a" /> </br>
