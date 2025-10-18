@@ -11,6 +11,7 @@
   - [UI MANAGER](#ui-manager)
   - [UI CANVAS](#ui-canvas)
   - [CsvConfigLoader.cs](#csvconfigloadercs)
+  - [Optional: ScriptableObject](#optional-scriptableobject)
   - [Mô phỏng hoạt động sản xuất/thu hoạch của worker](#mô-phỏng-hoạt-động-sản-xuấtthu-hoạch-của-worker)
   - [Hàm Quan Trọng](#hàm-quan-trọng)
     - [OnlGame_CheckWorking](#onlgame_checkworking)
@@ -117,6 +118,20 @@ Mặc định mỗi UI có Back riêng (BackKey) và vào back stack.
 4. Tạo đối tượng cấu hình và ép kiểu các cột.
 <img width="588" height="793" alt="image" src="https://github.com/user-attachments/assets/2585343e-59ec-44ea-a6fb-47804b8dcf07" />
 
+## Optional: ScriptableObject
+1. Quản lý bởi DataManager.cs: </br>
+> <img width="572" height="151" alt="image" src="https://github.com/user-attachments/assets/45b9598b-5de5-498f-b816-f212692b3ede" /> </br>
+2. Demo
+- Product Data: </br>
+> <img width="728" height="524" alt="image" src="https://github.com/user-attachments/assets/78dc40c0-7295-42fa-8472-71124369142a" /> </br>
+- Resource Init Data: </br>
+> <img width="726" height="475" alt="image" src="https://github.com/user-attachments/assets/53d74f36-e802-493d-aab5-edb739132ca3" /> </br>
+- Worker Data: </br>
+> <img width="523" height="152" alt="image" src="https://github.com/user-attachments/assets/22f3429a-2065-418b-befc-0134285b5018" /> </br>
+- Plot Data: </br>
+> <img width="255" height="120" alt="image" src="https://github.com/user-attachments/assets/6abcf7d5-f9c0-472c-ba0c-193de09fe475" /> </br>
+- Equipment Data: </br>
+> <img width="379" height="189" alt="image" src="https://github.com/user-attachments/assets/af91abd7-323b-4254-8bf5-db03be23e8b2" /> </br>
 
 ## Mô phỏng hoạt động sản xuất/thu hoạch của worker
 # Cách Worker lựa chọn công việc
