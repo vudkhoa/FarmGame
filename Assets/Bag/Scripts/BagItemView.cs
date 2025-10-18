@@ -32,6 +32,7 @@ namespace Bag.View
 
         public void Init(string name, int amount, int id)
         {
+            Debug.Log(name);
             this.SetName(name);
             this.SetAmount(amount);
             this.Id = id;

@@ -1,8 +1,8 @@
 using Bag.Controller;
 using Bag.Model;
-using Data.Config;
 using Data.Game;
 using Data.Manager;
+using Data.Product;
 using Equipment.Controller;
 using Player.Controller;
 using Plots.Controller;
@@ -37,14 +37,14 @@ namespace Shop.Controller
         {
             this.ShopItemList = new List<ShopModel>();  
             int index = -1;
-            foreach(ProductConfig config in DataManager.Instance.GameConfig.ProductConfigList)
+            foreach(ProductConf config in DataManager.Instance.ProductConfigData.ListProductConf)
             {
                 index++;
                 ShopModel item = new ShopModel();
                 ShopItemDetail data = new ShopItemDetail();
                 data.Id = index;
                 data.Price = config.Cost;
-                data.NameProduct = config.Name;
+                data.NameProduct = config.ProductType.Name;
                 data.PackSize = config.PackSize;
 
                 BagModel bagModel = new BagModel();
@@ -57,8 +57,8 @@ namespace Shop.Controller
 
             }
             // worker
-            WorkerConfig workerConfig = new WorkerConfig();
-            workerConfig = DataManager.Instance.GameConfig.WorkerConfig;
+            WorkerConf workerConfig = new WorkerConf();
+            workerConfig = DataManager.Instance.WorkerConfigData.WorkerConfig;
 
             index++;
             ShopModel itemWorker = new ShopModel();
@@ -75,8 +75,8 @@ namespace Shop.Controller
             this.ShopItemList.Add(itemWorker);
 
             // plot
-            PlotConfig plotConfig = new PlotConfig();
-            plotConfig = DataManager.Instance.GameConfig.PlotConfig;
+            PlotConf plotConfig = new PlotConf();
+            plotConfig = DataManager.Instance.PlotConfigData.PlotConfig;
 
             index++;
             ShopModel itemPlot = new ShopModel();
@@ -93,8 +93,8 @@ namespace Shop.Controller
             this.ShopItemList.Add(itemPlot);
 
             // euqipment
-            EquipmentConfig equipment = new EquipmentConfig();
-            equipment = DataManager.Instance.GameConfig.EquipmentConfig;
+            EquipmentConf equipment = new EquipmentConf();
+            equipment = DataManager.Instance.EquipmentConfigData.EquipmentConfig;
 
             index++;
             ShopModel itemEquipment = new ShopModel();
@@ -131,7 +131,7 @@ namespace Shop.Controller
                     model.State = worker.State;
                     model.IdProduct = -1;
                     model.IdPlot = -1;
-                    model.TimeTask = DataManager.Instance.GameConfig.WorkerConfig.TimeTask;
+                    model.TimeTask = DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask;
                     model.StartTime = DateTime.MinValue;
                     model.NotExecute = false;
 
@@ -149,7 +149,7 @@ namespace Shop.Controller
                     plot.CurLife = -1;
 
                     PlotModel model = new PlotModel();
-                    plot.Id = count.ToString();
+                    plot.Id = count;
 
                     PlotView view = Instantiate(PlotController.Instance.PlotPrefab, PlotController.Instance.ParentAllView);
                     model.Init(plot, view, count);

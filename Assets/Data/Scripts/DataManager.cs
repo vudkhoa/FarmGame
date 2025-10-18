@@ -1,52 +1,72 @@
 using Utils.DesignPattern.Singleton;
-using Data.Config;
 using Data.Game;
 using UnityEngine;
 using System.Collections.Generic;
 using Game.Boostrap;
 using System.IO;
 using System;
-using Product.Controller;
 using Sell.Model;
 using Sell.Controller;
 using Bag.Controller;
 using Plots.Model;
 using Plots.Controller;
+using Data.Product;
 
 namespace Data.Manager
 {
     public class DataManager : SingletonMono<DataManager>
     {
+        [Header(" Setting DatamManager ")]
+        [SerializeField] public ProductSO ProductConfigData;
+        [SerializeField] public ResourcesInitSO ResourcesInitData;
+        [SerializeField] public PlotSO PlotConfigData;
+        [SerializeField] public EquipmentSO EquipmentConfigData;
+        [SerializeField] public WorkerSO WorkerConfigData;
+
         [Header(" Running Game ")]
         public GameData GameData;
-        public GameConfig GameConfig;
         public string Json;
 
         public void Init()
         {
             GameData = new GameData();
-            GameConfig = new GameConfig();
+            SetupProductConfigData();
         }
 
-        public void ConvertData_ConfigToGame(ConfigDatabase DB)
+        private ProductTypeConf GetProductTypeConfig(int index)
         {
-            List<ProductConfig> ProductDataList = new List<ProductConfig>();
-            foreach (ProductConfig product in DB.ProductList.Values)
+            return this.ProductConfigData.ListProductType[index];
+        }
+
+        private void SetupProductConfigData()
+        {
+            foreach (ProductTypeConf config in this.ProductConfigData.ListProductType)
             {
-                ProductDataList.Add(product);
+                Debug.Log(config.Id + " " + config.Name);
             }
-            this.GameConfig.ProductConfigList = ProductDataList;
 
-            WorkerConfig workerConfig = new WorkerConfig();
-            workerConfig.Name = DB.WorkerConfig.Name;
-            workerConfig.Cost = DB.WorkerConfig.Cost;
-            workerConfig.TimeTask = DB.WorkerConfig.TimeTask;
-            workerConfig.PackSize = DB.WorkerConfig.PackSize;
-            this.GameConfig.WorkerConfig = workerConfig;
-            this.GameConfig.EquipmentConfig = DB.EquipmentConfig;
-            this.GameConfig.PlotConfig = DB.PlotConfig;
+            foreach (ProductConf config in this.ProductConfigData.ListProductConf)
+            {
+                ProductTypeConf type = this.GetProductTypeConfig(config.ProductType.Id - 1);
+                config.ProductType.Name = type.Name;
+                Debug.Log(  config.Id + " " + 
+                            config.ProductType.Id + " " + config.ProductType.Name + " " +
+                            config.Interval + " " +
+                            config.Price + " " +
+                            config.Cost);
+            }
+        }
 
-            // Read Init Resource or null
+        public void tmpCheck()
+        {
+            foreach (ResourceProduct rsInit in this.ResourcesInitData.ListResourceInit)
+            {
+                Debug.Log(rsInit.ProductType.Id + " " + rsInit.ProductType.Name);
+            }
+        }
+
+        public void CreateData()
+        {
             if (File.Exists(GameBootstrap.Instance.FilePath))
             {
                 Json = File.ReadAllText(GameBootstrap.Instance.FilePath);
@@ -57,36 +77,72 @@ namespace Data.Manager
                 this.GameData.Off = null;
                 List<ItemDetail> BagData = new List<ItemDetail>();
                 List<ItemDetail> SellData = new List<ItemDetail>();
-                foreach (ItemDetail bagItem in DB.BagInitList.Values)
+                foreach (ProductConf bagItem in this.ProductConfigData.ListProductConf)
                 {
-                    BagData.Add(bagItem);
+                    ItemDetail itemDetail = new ItemDetail();
+                    int amount = 0;
+                    foreach (ResourceProduct resourceProduct in this.ResourcesInitData.ListResourceInit)
+                    {
+                        if (bagItem.ProductType.Id == resourceProduct.ProductType.Id)
+                        {
+                            amount = resourceProduct.Amount;
+                        }
+                    }
+
+                    itemDetail.SetItemDetail(bagItem.Id, bagItem.ProductType, amount);
+
+                    BagData.Add(itemDetail);
 
                     ItemDetail sellItem = new ItemDetail
                     {
                         Id = bagItem.Id,
-                        Name = bagItem.Name,
-                        ProductType = bagItem.ProductType
+                        ProductType = bagItem.ProductType,
+                        Amount = 0
                     };
-
                     SellData.Add(sellItem);
 
                 }
                 GameData.BagItemList = BagData;
                 GameData.SellItemList = SellData;
-                
+
+
+                int plotCount = -1;
+                int workerCount = -1;
                 // Plot
-                List<PlotDetail> plotData = new List<PlotDetail>();
-                foreach (var plot in DB.PlotsInitList)
+                foreach (ResourceByName rsName in this.ResourcesInitData.ListResourceByName)
                 {
-                    plotData.Add(plot.Value);
+                    if (string.Equals(rsName.Name.ToString(), "Plot", StringComparison.OrdinalIgnoreCase))
+                    {
+                        plotCount = rsName.Amount;
+                    }
+                    else 
+                    if (string.Equals(rsName.Name.ToString(), "Worker", StringComparison.OrdinalIgnoreCase))
+                    {
+                        workerCount = rsName.Amount;
+                    }
+                }
+
+                List<PlotDetail> plotData = new List<PlotDetail>();
+                for (int i = 0; i < plotCount; i++)
+                {
+                    PlotDetail plot = new PlotDetail();
+                    plot.Id = i;
+                    plot.Status = PlotStatus.IsAvai;
+                    plot.CurTime = -1;
+                    plot.CurLife = -1;
+                    plot.ProductType = ProductConfigData.ListProductType[0];
+                    plotData.Add(plot);
                 }
                 GameData.PlotList = plotData;
-            
+
                 // Worker
                 List<WorkerDetail> workerData = new List<WorkerDetail>();
-                foreach (var worker in DB.WorkerInitList)
+                for (int i = 0; i < workerCount; i++)
                 {
-                    workerData.Add(worker.Value);
+                    WorkerDetail worker = new WorkerDetail();
+                    worker.Id = i.ToString();
+                    worker.State = Worker.Controller.WorkerState.Idle;
+                    workerData.Add(worker);
                 }
                 GameData.WorkerList = workerData;
 
@@ -97,6 +153,75 @@ namespace Data.Manager
                 this.GameData.Equipment = new EquipmentDetail();
             }
         }
+
+        //public void ConvertData_ConfigToGame(ConfigDatabase DB)
+        //{
+        //    //List<ProductConfig> ProductDataList = new List<ProductConfig>();
+        //    //foreach (ProductConfig product in DB.ProductList.Values)
+        //    //{
+        //    //    ProductDataList.Add(product);
+        //    //}
+        //    //this.GameConfig.ProductConfigList = ProductDataList;
+
+        //    //WorkerConfig workerConfig = new WorkerConfig();
+        //    //workerConfig.Name = DB.WorkerConfig.Name;
+        //    //workerConfig.Cost = DB.WorkerConfig.Cost;
+        //    //workerConfig.TimeTask = DB.WorkerConfig.TimeTask;
+        //    //workerConfig.PackSize = DB.WorkerConfig.PackSize;
+        //    //this.GameConfig.WorkerConfig = workerConfig;
+        //    //this.GameConfig.EquipmentConfig = DB.EquipmentConfig;
+        //    //this.GameConfig.PlotConfig = DB.PlotConfig;
+
+        //    // Read Init Resource or null
+        //    //if (File.Exists(GameBootstrap.Instance.FilePath))
+        //    //{
+        //    //    Json = File.ReadAllText(GameBootstrap.Instance.FilePath);
+        //    //    this.GameData = JsonUtility.FromJson<GameData>(Json);
+        //    //}
+        //    //else
+        //    //{
+        //    //    this.GameData.Off = null;
+        //    //    List<ItemDetail> BagData = new List<ItemDetail>();
+        //    //    List<ItemDetail> SellData = new List<ItemDetail>();
+        //    //    foreach (Re bagItem in DB.BagInitList.Values)
+        //    //    {
+        //    //        BagData.Add(bagItem);
+
+        //    //        ItemDetail sellItem = new ItemDetail
+        //    //        {
+        //    //            Id = bagItem.Id,
+        //    //            ProductType = bagItem.ProductType,
+        //    //            Amount = 0
+        //    //        };
+        //    //        SellData.Add(sellItem);
+
+        //    //    }
+        //    //    GameData.BagItemList = BagData;
+        //    //    GameData.SellItemList = SellData;
+                
+        //    //    // Plot
+        //    //    List<PlotDetail> plotData = new List<PlotDetail>();
+        //    //    foreach (var plot in DB.PlotsInitList)
+        //    //    {
+        //    //        plotData.Add(plot.Value);
+        //    //    }
+        //    //    GameData.PlotList = plotData;
+            
+        //    //    // Worker
+        //    //    List<WorkerDetail> workerData = new List<WorkerDetail>();
+        //    //    foreach (var worker in DB.WorkerInitList)
+        //    //    {
+        //    //        workerData.Add(worker.Value);
+        //    //    }
+        //    //    GameData.WorkerList = workerData;
+
+        //    //    // Player
+        //    //    this.GameData.Player = new PlayerDetail();
+
+        //    //    // Equipment
+        //    //    this.GameData.Equipment = new EquipmentDetail();
+        //    //}
+        //}
 
         public void SetDateTimeOff()
         {
@@ -111,23 +236,23 @@ namespace Data.Manager
             return json;
         }
     
-        public int GetIdProductConfig(ProductType type)
+        public int GetIdProductConfig(ProductTypeConf type)
         {
-            foreach (ProductConfig config in this.GameConfig.ProductConfigList)
+            foreach (ProductConf config in this.ProductConfigData.ListProductConf)
             {
-                if (config.Name.ToString() == type.ToString())
+                if (config.ProductType.Id == type.Id)
                 {
-                    return int.Parse(config.Id);
+                    return config.Id;
                 }
             }
             return -1;
         }
 
-        public ProductConfig GetProductConfig(ProductType type)
+        public ProductConf GetProductConfig(ProductTypeConf type)
         {
-            foreach (ProductConfig config in this.GameConfig.ProductConfigList)
+            foreach (ProductConf config in this.ProductConfigData.ListProductConf)
             {
-                if (config.Name.ToString() == type.ToString())
+                if (config.ProductType.Id == type.Id)
                 {
                     return config;
                 }
@@ -149,7 +274,7 @@ namespace Data.Manager
                 curPlotList.Add(0);
                 foreach(PlotModel plot in PlotController.Instance.PlotModelList)
                 {
-                    if (string.Equals(plot.Data.ProductType.ToString(), bagItem.Name.ToString(), StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(plot.Data.ProductType.Name.ToString(), bagItem.ProductType.Name.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         count++;
                     }
@@ -160,7 +285,7 @@ namespace Data.Manager
                 startPlotList.Add(0);
                 foreach (PlotDetail plot in gameDataTmp.PlotList)
                 {
-                    if (string.Equals(plot.ProductType.ToString(), bagItem.Name.ToString(), StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(plot.ProductType.Name.ToString(), bagItem.ProductType.Name.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         count++;
                     }
@@ -171,7 +296,7 @@ namespace Data.Manager
             foreach (SellModel sellModel in SellController.Instance.SellModelList)
             {
                 index++;
-                if (index >= this.GameConfig.ProductConfigList.Count) { return; }
+                if (index >= this.ProductConfigData.ListProductConf.Count) { return; }
                 int startBag = gameDataTmp.BagItemList[index].Amount + startPlotList[index];
                 int startSell = gameDataTmp.SellItemList[index].Amount;
                 int curPlot = curPlotList[index];
@@ -180,7 +305,7 @@ namespace Data.Manager
                 Debug.Log(startBag + " " + startSell + " " + curPlot + " " + curBag + " " + offsetSell);
                 if (offsetSell != 0)
                 {
-                    SellController.Instance.SellModelList[index].ProductAmount = (startSell + offsetSell * this.GameConfig.ProductConfigList[index].Lifetime);
+                    SellController.Instance.SellModelList[index].ProductAmount = (startSell + offsetSell * this.ProductConfigData.ListProductConf[index].Lifetime);
                     SellController.Instance.SellModelList[index].View.SetAmount(SellController.Instance.SellModelList[index].ProductAmount);
                 }
             }

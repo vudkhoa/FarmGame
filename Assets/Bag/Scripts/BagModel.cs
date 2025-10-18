@@ -1,5 +1,6 @@
 using Bag.View;
 using Data.Game;
+using Data.Product;
 using Product.Controller;
 
 namespace Bag.Model
@@ -8,18 +9,16 @@ namespace Bag.Model
     {
         public BagItemView View;
         public int Id;
-        public ProductType ProductType;
-        public string ProductName;
+        public ProductTypeConf ProductType;
         public int ProductAmount;
 
         public void Setup(ItemDetail bagItem, BagItemView view)
         {
-            this.Id = int.Parse(bagItem.Id);
+            this.Id = bagItem.Id;
             this.ProductType = bagItem.ProductType;
-            this.ProductName = bagItem.Name;
             this.ProductAmount = bagItem.Amount;
             this.View = view;
-            this.View.Init(this.ProductName, this.ProductAmount, this.Id);
+            this.View.Init(this.ProductType.Name, this.ProductAmount, this.Id);
         }
     
         public void CaculateAmount(int value)

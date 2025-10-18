@@ -1,0 +1,128 @@
+{
+    "Off": "10/18/2025 2:28:42 PM",
+    "BagItemList": [
+        {
+            "Id": 1,
+            "ProductType": {
+                "Id": 2,
+                "Name": "Tomato"
+            },
+            "Amount": 4
+        },
+        {
+            "Id": 2,
+            "ProductType": {
+                "Id": 3,
+                "Name": "Blueberry"
+            },
+            "Amount": 10
+        },
+        {
+            "Id": 3,
+            "ProductType": {
+                "Id": 4,
+                "Name": "Strawberry"
+            },
+            "Amount": 0
+        },
+        {
+            "Id": 4,
+            "ProductType": {
+                "Id": 5,
+                "Name": "Cow"
+            },
+            "Amount": 2
+        }
+    ],
+    "SellItemList": [
+        {
+            "Id": 0,
+            "ProductType": {
+                "Id": 2,
+                "Name": "Tomato"
+            },
+            "Amount": 120
+        },
+        {
+            "Id": 1,
+            "ProductType": {
+                "Id": 3,
+                "Name": "Blueberry"
+            },
+            "Amount": 0
+        },
+        {
+            "Id": 2,
+            "ProductType": {
+                "Id": 4,
+                "Name": "Strawberry"
+            },
+            "Amount": 0
+        },
+        {
+            "Id": 3,
+            "ProductType": {
+                "Id": 5,
+                "Name": "Cow"
+            },
+            "Amount": 0
+        }
+    ],
+    "PlotList": [
+        {
+            "Id": 0,
+            "ProductType": {
+                "Id": 2,
+                "Name": "Tomato"
+            },
+            "Status": 2,
+            "CurTime": 292.0,
+            "CurLife": 2,
+            "CurAmount": 2,
+            "Deadline": "1/1/0001 12:00:00 AM",
+            "WorkerId": -1
+        },
+        {
+            "Id": 1,
+            "ProductType": {
+                "Id": 2,
+                "Name": "Tomato"
+            },
+            "Status": 2,
+            "CurTime": 52.0,
+            "CurLife": 2,
+            "CurAmount": 2,
+            "Deadline": "1/1/0001 12:00:00 AM",
+            "WorkerId": -1
+        },
+        {
+            "Id": 2,
+            "ProductType": {
+                "Id": 2,
+                "Name": "Tomato"
+            },
+            "Status": 2,
+            "CurTime": 412.0,
+            "CurLife": 1,
+            "CurAmount": 1,
+            "Deadline": "1/1/0001 12:00:00 AM",
+            "WorkerId": -1
+        }
+    ],
+    "WorkerList": [
+        {
+            "Id": "0",
+            "State": 1,
+            "IdPlot": -1,
+            "IdProduct": -1,
+            "StartTime": "1/1/0001 12:00:00 AM",
+            "NotExcute": false
+        }
+    ],
+    "Player": {
+        "Gold": 0
+    },
+    "Equipment": {
+        "CurrentLevel": 1
+    }
+}

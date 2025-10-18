@@ -1,6 +1,6 @@
-using Game.Manager;
+using Data.Manager;
+using Data.Product;
 using Plots.Controller;
-using Product.Controller;
 using System;
 using System.Collections.Generic;
 using Worker.Controller;
@@ -12,6 +12,7 @@ namespace Data.Game
     {
         public string Off;
         public List<ItemDetail> BagItemList;
+
         public List<ItemDetail> SellItemList;
         public List<PlotDetail> PlotList;
         public List<WorkerDetail> WorkerList;
@@ -22,17 +23,23 @@ namespace Data.Game
     [Serializable]
     public class ItemDetail
     {
-        public string Id;
-        public string Name;
-        public ProductType ProductType;
+        public int Id;
+        public ProductTypeConf ProductType;
         public int Amount;
+
+        public void SetItemDetail(int id, ProductTypeConf type, int amount)
+        {
+            this.Id = id;
+            this.ProductType = type;
+            this.Amount = amount;
+        }
     }
 
     [Serializable]
     public class PlotDetail
     {
-        public string Id;
-        public ProductType ProductType;
+        public int Id;
+        public ProductTypeConf ProductType;
         public PlotStatus Status;
         public float CurTime;
         public int CurLife;
@@ -47,6 +54,7 @@ namespace Data.Game
             this.WorkerId = -1;
             this.Status = PlotStatus.IsAvai;
             this.Deadline = DateTime.MinValue.ToString();
+            //this.ProductType = DataManager.Instance.ProductConfigData.ListProductType[0];
         }
     }
 

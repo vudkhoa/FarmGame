@@ -2,6 +2,7 @@ using Bag.Controller;
 using Bag.Model;
 using Data.Game;
 using Data.Manager;
+using Data.Product;
 using Player.Controller;
 using Product.Controller;
 using Sell.Model;
@@ -30,28 +31,27 @@ namespace Sell.Controller
                 index++;
                 SellModel sellModel = new SellModel();
                 SellItemView view = Instantiate(this.SellItemPrefab, this.ParentAllSellItem);
-
                 ItemDetail sellItem = new ItemDetail();
+
                 foreach (ItemDetail item in DataManager.Instance.GameData.SellItemList)
                 {
-                    if (bagItem.ProductName.ToString() == item.Name.ToString())
+                    if (bagItem.ProductType.Id == item.ProductType.Id)
                     {
                         sellItem.Amount = item.Amount;
                     }
                 }
 
-                sellItem.Name = bagItem.ProductName;
-                sellItem.Id = index.ToString();
+                sellItem.Id = index;
                 sellItem.ProductType = bagItem.ProductType;
 
-                int price = DataManager.Instance.GameConfig.ProductConfigList[index].Price;
+                int price = DataManager.Instance.ProductConfigData.ListProductConf[index].Price;
 
                 sellModel.Setup(sellItem, view, price);
                 SellModelList.Add(sellModel);
             }
         }
 
-        public int FindIndexByProductType(ProductType type)
+        public int FindIndexByProductType(ProductTypeConf type)
         {
             int count = -1;
             foreach (SellModel model in this.SellModelList)
@@ -86,9 +86,8 @@ namespace Sell.Controller
             foreach (SellModel model in this.SellModelList)
             {
                 ItemDetail sell = new ItemDetail();
-                sell.Id = model.Id.ToString();
+                sell.Id = model.Id;
                 sell.ProductType = model.ProductType;
-                sell.Name = model.ProductName;
                 sell.Amount = model.ProductAmount;
                 DataManager.Instance.GameData.SellItemList.Add(sell);
             }

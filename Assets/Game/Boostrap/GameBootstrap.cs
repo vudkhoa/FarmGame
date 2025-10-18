@@ -1,12 +1,10 @@
 ﻿using Bag.Controller;
-using Data.Config;
 using Data.Manager;
 using Player.Controller;
 using Plots.Controller;
 using Sell.Controller;
 using System.IO;
 using UnityEngine;
-using Utils.CsvTool;
 using Utils.DesignPattern.Singleton;
 using Worker.Controller;
 
@@ -40,10 +38,12 @@ namespace Game.Boostrap
         public void LoadAllData()
         {
             Directory.CreateDirectory(this.FolderPath);
-            ConfigDatabase db = CsvConfigLoader.LoadFromFolder(this.FolderPath);
+            //ConfigDatabase db = CsvConfigLoader.LoadFromFolder(this.FolderPath);
 
             DataManager.Instance.Init();
-            DataManager.Instance.ConvertData_ConfigToGame(db);
+            //DataManager.Instance.tmpCheck();
+            DataManager.Instance.CreateData();
+            //DataManager.Instance.ConvertData_ConfigToGame(db);
         }
 
         public void SaveAllData() 

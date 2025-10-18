@@ -1,6 +1,6 @@
 using Bag.Controller;
-using Data.Config;
 using Data.Manager;
+using Data.Product;
 using Equipment.Model;
 using Equipment.View;
 using Plots.Controller;
@@ -61,9 +61,9 @@ namespace Equipment.Controller
                 return;
             }
             //Debug.Log(this.Equipment.Data.CurrentLevel);
-            float percent = (DataManager.Instance.GameConfig.EquipmentConfig.Percent / 100) * this.Equipment.Data.CurrentLevel;
+            float percent = (DataManager.Instance.EquipmentConfigData.EquipmentConfig.Percent / 100) * this.Equipment.Data.CurrentLevel;
             
-            foreach (ProductConfig config in DataManager.Instance.GameConfig.ProductConfigList)
+            foreach (ProductConf config in DataManager.Instance.ProductConfigData.ListProductConf)
             {
                 int newInterval = config.Interval - (int)(config.Interval * percent);
                 config.Interval = newInterval;

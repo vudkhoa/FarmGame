@@ -23,18 +23,18 @@ namespace Equipment.Model
         public void InitView(EquipmentView view)
         {
             this.View = view;
-            this.View.SetupData(this.Data.CurrentLevel, DataManager.Instance.GameConfig.EquipmentConfig.LimitLevel);
+            this.View.SetupData(this.Data.CurrentLevel, DataManager.Instance.EquipmentConfigData.EquipmentConfig.LimitLevel);
         }
     
         public void CaculateLevel(int value)
         {
             float tmpLevel = this.Data.CurrentLevel + value;
-            if (tmpLevel > DataManager.Instance.GameConfig.EquipmentConfig.LimitLevel)
+            if (tmpLevel > DataManager.Instance.EquipmentConfigData.EquipmentConfig.LimitLevel)
             {
                 return;
             }
             this.Data.CurrentLevel += value;
-            this.View.SetupData(this.Data.CurrentLevel, DataManager.Instance.GameConfig.EquipmentConfig.LimitLevel);
+            this.View.SetupData(this.Data.CurrentLevel, DataManager.Instance.EquipmentConfigData.EquipmentConfig.LimitLevel);
         }
     }
 }

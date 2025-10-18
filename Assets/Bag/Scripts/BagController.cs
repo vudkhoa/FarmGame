@@ -1,10 +1,9 @@
 using Bag.Model;
 using Bag.View;
-using Data.Config;
 using Data.Game;
 using Data.Manager;
+using Data.Product;
 using Plots.Controller;
-using Product.Controller;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,7 +23,7 @@ namespace Bag.Controller
         {
             // Model
             this.BagModelList = new List<BagModel>();
-            foreach (ProductConfig component in DataManager.Instance.GameConfig.ProductConfigList)
+            foreach (ProductConf component in DataManager.Instance.ProductConfigData.ListProductConf)
             {
                 BagModel bagModel = new BagModel();
                 BagItemView view = Instantiate(this.BagViewPrefab, this.ParentBagView);
@@ -32,15 +31,14 @@ namespace Bag.Controller
                 ItemDetail bagItem = new ItemDetail();
                 foreach (ItemDetail item in DataManager.Instance.GameData.BagItemList)
                 {
-                    if (component.Name.ToString() == item.Name.ToString()) 
+                    if (component.ProductType.Id == item.ProductType.Id) 
                     {
                         bagItem.Amount = item.Amount;
                     }
                 }
 
-                bagItem.Name = component.Name;
+                bagItem.ProductType = component.ProductType;
                 bagItem.Id = component.Id;
-                bagItem.ProductType = (ProductType)Enum.Parse(typeof(ProductType), bagItem.Name);
 
                 bagModel.Setup(bagItem, view);
                 BagModelList.Add(bagModel);
@@ -51,7 +49,6 @@ namespace Bag.Controller
         {
             if (this.BagModelList[id].ProductAmount <= 0)
             {
-                //Debug.Log(this.BagModelList[id] + " " + this.BagModelList[id].ProductName);
                 return;
             }
 
@@ -85,11 +82,12 @@ namespace Bag.Controller
 
         public void CaculateProductAmountByName(string name, int value)
         {
+            Debug.Log("Name: " + name + "; Value: " + value);
             int index = -1;
             foreach (BagModel model in this.BagModelList)
             {
                 index++;
-                if (string.Equals(model.ProductName.ToString(), name.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(model.ProductType.Name.ToString(), name.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     this.BagModelList[index++].CaculateAmount(value);
                     return;
@@ -97,12 +95,7 @@ namespace Bag.Controller
             }
         }
 
-        private void FillOffset()
-        {
-
-        }
-
-        public int GetIndex(ProductType type)
+        public int GetIndex(ProductTypeConf type)
         {
             int index = -1;
             foreach (BagModel model in this.BagModelList)
@@ -123,9 +116,8 @@ namespace Bag.Controller
             foreach (BagModel model in this.BagModelList)
             {
                 ItemDetail bagItem = new ItemDetail();
-                bagItem.Id = model.Id.ToString();
+                bagItem.Id = model.Id;
                 bagItem.ProductType = model.ProductType;
-                bagItem.Name = model.ProductName;
                 bagItem.Amount = model.ProductAmount;
                 DataManager.Instance.GameData.BagItemList.Add(bagItem);
             }

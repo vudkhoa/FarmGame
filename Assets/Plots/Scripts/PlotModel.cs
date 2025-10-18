@@ -1,4 +1,5 @@
 using Data.Game;
+using Data.Product;
 using Plots.Controller;
 using Plots.View;
 using Product.Controller;
@@ -33,7 +34,7 @@ namespace Plots.Model
             this.View.Setup(0f, 0, this.Data.CurAmount);
         }
 
-        public void Setup(ProductType type, int interval, int lifetime)
+        public void Setup(ProductTypeConf type, int interval, int lifetime)
         {
             // Data
             this.Data.ProductType = type;
@@ -82,7 +83,7 @@ namespace Plots.Model
     
         public void SetNullData(bool haveView = true)
         {
-            string id = this.Data.Id;
+            int id = this.Data.Id;
             this.Data = new PlotDetail();
             this.Data.CurTime = -1;
             this.Data.CurLife  = -1;

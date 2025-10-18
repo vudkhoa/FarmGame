@@ -1,10 +1,9 @@
 ﻿using Bag.Controller;
-using Data.Config;
 using Data.Game;
 using Data.Manager;
+using Data.Product;
 using Plots.Controller;
 using Plots.Model;
-using Product.Controller;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +67,7 @@ namespace Worker.Controller
             model.State = worker.State;
             model.IdProduct = worker.IdProduct;
             model.IdPlot = worker.IdPlot;
-            model.TimeTask = DataManager.Instance.GameConfig.WorkerConfig.TimeTask;
+            model.TimeTask = DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask;
             model.StartTime = DateTime.Parse(worker.StartTime);
             model.NotExecute = worker.NotExcute;
             return model;
@@ -197,7 +196,7 @@ namespace Worker.Controller
                 {
                     if (
                         // Gần đến deadline
-                        minDeadline.Item2 <= DataManager.Instance.GameConfig.WorkerConfig.TimeTask + Offset && 
+                        minDeadline.Item2 <= DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask + Offset && 
                         // Chưa có Worker nào làm
                         !this.CheckExistPlotExceptId(model.Id, minDeadline.Item1) &&
                         // Đã chín
@@ -261,7 +260,7 @@ namespace Worker.Controller
                             if (Harvestable(PlotController.Instance.PlotModelList[minDeadline.Item1]))
                             {
                                 // Harvest
-                                Debug.Log(minDeadline.Item2 + " " + (DataManager.Instance.GameConfig.WorkerConfig.TimeTask + Offset));
+                                Debug.Log(minDeadline.Item2 + " " + (DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask + Offset));
                                 PlotController.Instance.PlotModelList[minDeadline.Item1].Data.WorkerId = model.Id;
                                 model.IdPlot = minDeadline.Item1;
                                 model.StateMachine.Change(model, new Harvest());
@@ -336,7 +335,7 @@ namespace Worker.Controller
                 {
                     // Gán luôn thời gian hoàn thành công việc.
                     result[int.Parse(worker.Id)] = DateTime.Parse(worker.StartTime)
-                        .AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                        .AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                 }
             }
 
@@ -383,7 +382,7 @@ namespace Worker.Controller
                         if (plot.Data.WorkerId >= 0 &&
                             DataManager.Instance.GameData.WorkerList[plot.Data.WorkerId].State == WorkerState.Harvest)
                         {
-                            ProductType tmpType = plotTmp[count].Data.ProductType;
+                            ProductTypeConf tmpType = plotTmp[count].Data.ProductType;
                             int workerId = plot.Data.WorkerId;
 
                             // Free Time Plot Deadline sau khi sản phẩm đạt chuẩn.
@@ -461,31 +460,31 @@ namespace Worker.Controller
                             }
 
                             // time thời gian nếu làm xong nếu worker nhận việc từ now.
-                            DateTime time = now.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                            DateTime time = now.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                             // Chạy mô phỏng, nếu chọn trồng có sản phẩm nào hỏng không,
                             // nếu có trả về index Plot chứa sản phẩm đó. 
                             int indexPlot = PlotController.Instance.OffGame_FindIndex_SkipHarvest
                                             (time, new List<PlotModel>(plotTmp), workerTmp.ElementAt(i).Key, 
                                             workerTmp.Count - 1, new Dictionary<int, DateTime>(workerTmp),
-                                            DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                                            DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
 
                             // Nếu có và thời gian thu hoạch xong > thời gian hết hạn.
                             if (indexPlot >= 0 && time > DateTime.Parse(plotTmp[indexPlot].Data.Deadline))
                             {
                                 // Harvest
-                                ProductType tmpType = plotTmp[indexPlot].Data.ProductType; 
+                                ProductTypeConf tmpType = plotTmp[indexPlot].Data.ProductType; 
                                 plotTmp[indexPlot].ResetData(false);
                                 plotTmp[indexPlot].SetNullData(false);
                                 plotTmp[indexPlot].Data.ProductType = tmpType;
 
                                 // Gán Free Time Plot
-                                freeTimePlot[indexPlot] = now.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                                freeTimePlot[indexPlot] = now.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
 
                                 var key = workerTmp.ElementAt(i).Key;
                                 plotTmp[indexPlot].Data.WorkerId = i;
                                 
                                 // Gán thời gian làm xong cho Worker.
-                                workerTmp[key] = now.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                                workerTmp[key] = now.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
 
                                 // Đã có làm việc
                                 progressed = true;
@@ -511,9 +510,9 @@ namespace Worker.Controller
                                 {
                                     // Produce
                                     int indexPr = DataManager.Instance.GetIdProductConfig(BagController.Instance.BagModelList[idProduct - 1].ProductType) - 1;
-                                    int interval = DataManager.Instance.GameConfig.ProductConfigList[indexPr].Interval;
-                                    int lifetime = DataManager.Instance.GameConfig.ProductConfigList[indexPr].Lifetime;
-                                    int durationDeadline = DataManager.Instance.GameConfig.ProductConfigList[indexPr].Deadline;
+                                    int interval = DataManager.Instance.ProductConfigData.ListProductConf[indexPr].Interval;
+                                    int lifetime = DataManager.Instance.ProductConfigData.ListProductConf[indexPr].Lifetime;
+                                    int durationDeadline = DataManager.Instance.ProductConfigData.ListProductConf[indexPr].Deadline;
 
                                     plotTmp[findPlot.Item1].Interval = interval;
                                     plotTmp[findPlot.Item1].Lifetime = lifetime;
@@ -523,9 +522,9 @@ namespace Worker.Controller
 
                                     // Giảm sản phẩm trong Bag
                                     BagController.Instance.CaculateProductAmountByName(
-                                        plotTmp[findPlot.Item1].Data.ProductType.ToString(), -1);
+                                        plotTmp[findPlot.Item1].Data.ProductType.Name.ToString(), -1);
 
-                                    int timeTask = DataManager.Instance.GameConfig.WorkerConfig.TimeTask;
+                                    int timeTask = DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask;
                                     // Tính Deadline
                                     plotTmp[findPlot.Item1].Data.Deadline = 
                                         now.AddSeconds(interval * lifetime + durationDeadline + timeTask).ToString();
@@ -537,7 +536,7 @@ namespace Worker.Controller
                                     // Xử lý Worker và Đánh dấu đã làm 1 công việc.
                                     var key = workerTmp.ElementAt(i).Key;
                                     plotTmp[findPlot.Item1].Data.WorkerId = i;
-                                    workerTmp[key] = now.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                                    workerTmp[key] = now.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                                     progressed = true;
 
                                     //// Debug.
@@ -554,15 +553,15 @@ namespace Worker.Controller
                                         DateTime.Parse(plotTmp[idP].Data.Deadline) <= now.AddSeconds(plotTmp[idP].DurationDeadline))
                                     {
                                         // Harvest
-                                        ProductType tmpType = plotTmp[idP].Data.ProductType;
+                                        ProductTypeConf tmpType = plotTmp[idP].Data.ProductType;
                                         plotTmp[idP].ResetData(false);
                                         plotTmp[idP].SetNullData(false);
                                         plotTmp[idP].Data.ProductType = tmpType;
                                         
-                                        freeTimePlot[idP] = now.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                                        freeTimePlot[idP] = now.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                                         var key = workerTmp.ElementAt(i).Key;
                                         plotTmp[idP].Data.WorkerId = i;
-                                        workerTmp[key] = now.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                                        workerTmp[key] = now.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                                         progressed = true;
 
                                         harvestTime[idP] = now;
@@ -599,15 +598,15 @@ namespace Worker.Controller
                 count++;
                 WorkerDetail workerDetail = new WorkerDetail();
                 PlotDetail plotDetail = new PlotDetail();
-                if (plotModel.Data.Id.Length == 0)
+                if (plotModel.Data.Id < 0)
                 {
-                    plotModel.Data.Id = count.ToString();
+                    plotModel.Data.Id = count;
                 }
 
                 // Nếu Không có Deadline và đang có thể tác động 
                 // ==> Rảnh rỗi.
                 if (DateTime.Parse(plotModel.Data.Deadline) == DateTime.MinValue 
-                    && freeTimePlot[int.Parse(plotModel.Data.Id)] <= DateTime.Now)
+                    && freeTimePlot[plotModel.Data.Id] <= DateTime.Now)
                 {
                     // Reset Data
                     plotDetail.Id = plotModel.Data.Id;
@@ -629,7 +628,7 @@ namespace Worker.Controller
                         // Không có Deadline nhưng Free Time Plot lại chưa xong 
                         // => Đang Thu hoạch.
                         DateTime.Parse(plotModel.Data.Deadline) == DateTime.MinValue
-                        && freeTimePlot[int.Parse(plotModel.Data.Id)] > DateTime.Now
+                        && freeTimePlot[plotModel.Data.Id] > DateTime.Now
                     ) 
                     ||
                     (
@@ -656,9 +655,9 @@ namespace Worker.Controller
                         // Gán lại thông tin cho worker để tiếp tục thu hoạch
                         workerDetail.Id = plotModel.Data.WorkerId.ToString();
                         // mảng harvestTime lưu thời gian bắt đầu thu hoạch như ở hàm OffGame_CheckWorking đã giải thích.
-                        workerDetail.StartTime = harvestTime[int.Parse(plotModel.Data.Id)].ToString();
+                        workerDetail.StartTime = harvestTime[plotModel.Data.Id].ToString();
                         workerDetail.IdProduct = BagController.Instance.GetIndex(plotDetail.ProductType) + 1;
-                        workerDetail.IdPlot = int.Parse(plotModel.Data.Id);
+                        workerDetail.IdPlot = plotModel.Data.Id;
                         workerDetail.State = WorkerState.Harvest;
                         workerDetail.NotExcute = false;
                         // Đưa lại vào mảng DataManager Đã Reset ban nảy.
@@ -678,13 +677,13 @@ namespace Worker.Controller
 
                     // Gán lại Data Plot
                     plotDetail.ProductType = plotModel.Data.ProductType;
-                    if (plotDetail.ProductType != ProductType.None)
+                    if (plotDetail.ProductType != null)
                     {
                         //// Debug
                         Debug.Log(plotDetail.ProductType);
 
                         // Lấy thông tin Product Config
-                        ProductConfig config = DataManager.Instance.GetProductConfig(plotDetail.ProductType);
+                        ProductConf config = DataManager.Instance.GetProductConfig(plotDetail.ProductType);
                         plotDetail.Id = plotModel.Data.Id;
                         plotDetail.CurAmount = config.Lifetime - plotModel.Data.CurLife;
                         plotDetail.Status = PlotStatus.NotIsAvai;
@@ -705,10 +704,10 @@ namespace Worker.Controller
                     DateTime startTime = deadline;
                     startTime = startTime.AddSeconds(-plotModel.DurationDeadline);
                     startTime = startTime.AddSeconds(-plotModel.Interval * plotModel.Lifetime);
-                    startTime = startTime.AddSeconds(-DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                    startTime = startTime.AddSeconds(-DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
 
                     // Mốc thời gian hoàn thành sản xuất.
-                    DateTime doneProduce = startTime.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                    DateTime doneProduce = startTime.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                     
                     // Mốc thời gian hoàn thành phát triển.
                     DateTime doneDevProduct = doneProduce.AddSeconds(plotModel.Interval * plotModel.Lifetime + 
@@ -726,12 +725,12 @@ namespace Worker.Controller
                             workerDetail.Id = plotModel.Data.WorkerId.ToString();
                             workerDetail.StartTime = startTime.ToString();
                             workerDetail.IdProduct = BagController.Instance.GetIndex(plotModel.Data.ProductType) + 1;
-                            workerDetail.IdPlot = int.Parse(plotModel.Data.Id);
+                            workerDetail.IdPlot = plotModel.Data.Id;
                             workerDetail.State = WorkerState.Produce;
                             workerDetail.NotExcute = false;
 
                             // Đã trừ khi qua chạy mô phỏng nhưng chưa trồng xong --> trả lại cho Bag.
-                            BagController.Instance.CaculateProductAmountByName(plotModel.Data.ProductType.ToString(), 1);
+                            BagController.Instance.CaculateProductAmountByName(plotModel.Data.ProductType.Name.ToString(), 1);
 
                             // Đưa lại Data Worker
                             DataManager.Instance.GameData.WorkerList[int.Parse(workerDetail.Id)] = workerDetail;
@@ -777,7 +776,7 @@ namespace Worker.Controller
                 Debug.Log(plotDetail.Id + " " + plotDetail.ProductType + " " + plotDetail.Status + " " +
                     plotDetail.CurTime + " " + plotDetail.CurLife + " " + plotDetail.CurAmount + " " 
                     + plotDetail.Deadline + " " + plotDetail.WorkerId + " " 
-                    + freeTimePlot[int.Parse(plotModel.Data.Id)]);
+                    + freeTimePlot[plotModel.Data.Id]);
                 // Đưa data lại cho DataManager
                 DataManager.Instance.GameData.PlotList.Add(plotDetail);
             }

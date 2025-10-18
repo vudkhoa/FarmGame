@@ -1,7 +1,6 @@
+using Data.Product;
 using Plots.Controller;
-using Product.Controller;
 using System;
-using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,9 +40,10 @@ namespace Plots.View
             this.id = id;
         }
 
-        public void SetProductType(ProductType productType)
+        public void SetProductType(ProductTypeConf productType)
         {
-            this.CurName.text = productType.ToString();
+            Debug.Log(productType.Name.ToString());
+            this.CurName.text = productType.Name.ToString();
         }
 
         public void SetAmount(int amount)

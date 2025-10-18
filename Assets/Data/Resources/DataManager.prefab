@@ -44,6 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c674aa0c0026ba5488ca94c5a00f0dd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ProductConfigData: {fileID: 11400000, guid: 105d4ca9ecd371a498373b83c91bde4d, type: 2}
+  ResourcesInitData: {fileID: 11400000, guid: e25fbdb94b9cd804e8878baea47742bf, type: 2}
+  PlotConfigData: {fileID: 11400000, guid: 9a3321480b49b5b4eaaa6eb93337ec4b, type: 2}
+  EquipmentConfigData: {fileID: 11400000, guid: 1516b41ffd100cd49bed6e38dbcd9a31, type: 2}
+  WorkerConfigData: {fileID: 11400000, guid: 8b7004beb67aeda4cbcff858e310d992, type: 2}
   GameData:
     Off: 
     BagItemList: []
@@ -54,13 +59,4 @@ MonoBehaviour:
       Gold: 0
     Equipment:
       CurrentLevel: 0
-  GameConfig:
-    ProductConfigList: []
-    WorkerConfig:
-      Name: 
-      Cost: 0
-      TimeTask: 0
-      PackSize: 0
-    EquipmentConfig:
-      Percent: 0
-      LimitLevel: 0
+  Json: 

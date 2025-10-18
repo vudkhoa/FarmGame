@@ -1,10 +1,9 @@
 ﻿using Bag.Controller;
-using Data.Config;
 using Data.Game;
 using Data.Manager;
+using Data.Product;
 using Plots.Model;
 using Plots.View;
-using Product.Controller;
 using Sell.Controller;
 using System;
 using System.Collections.Generic;
@@ -46,8 +45,12 @@ namespace Plots.Controller
                 // Khởi tạo Plot ở trạng thái Idle.
                 count++;
                 PlotModel model = new PlotModel();
-                plot.Id = count.ToString();
+                plot.Id = count;
                 PlotView view = Instantiate(PlotPrefab, ParentAllView);
+                if (plot.ProductType == null)
+                {
+                    plot.ProductType = new ProductTypeConf();
+                }
                 model.Init(plot, view, count);
 
 
@@ -56,17 +59,17 @@ namespace Plots.Controller
                 int durationDeadline = 0;
                 
                 // Nếu có Product Type --> Get các thông số từ Product Config.
-                if (plot.ProductType != ProductType.None)
+                if (plot.ProductType != null)
                 {
                     interval = 0;
                     lifetime = 0;
                     durationDeadline = 0;
 
-                    List<ProductConfig> productConfigs = new List<ProductConfig>();
-                    productConfigs = DataManager.Instance.GameConfig.ProductConfigList;
-                    foreach (ProductConfig product in productConfigs)
+                    List<ProductConf> productConfigs = new List<ProductConf>();
+                    productConfigs = DataManager.Instance.ProductConfigData.ListProductConf;
+                    foreach (ProductConf product in productConfigs)
                     {
-                        if (product.Name.ToString() == plot.ProductType.ToString())
+                        if (product.ProductType.Id == plot.ProductType.Id)
                         {
                             interval = product.Interval;
                             lifetime = product.Lifetime;
@@ -129,7 +132,7 @@ namespace Plots.Controller
                 }
 
                 // IsAvai và chưa có Worker nào đang tác động, tránh 2 worker cùng tác động 1 plot.
-                if (model.Data.Status == PlotStatus.IsAvai && !WorkerController.Instance.CheckExistPlot(int.Parse(model.Data.Id)))
+                if (model.Data.Status == PlotStatus.IsAvai && !WorkerController.Instance.CheckExistPlot(model.Data.Id))
                 {
                     return count;
                 }
@@ -155,7 +158,7 @@ namespace Plots.Controller
         }
     
         // Đưa Data qua Plot (Click trồng trọt từ người chơi).
-        public void SetPlotByIndex(int index, ProductType productType)
+        public void SetPlotByIndex(int index, ProductTypeConf productType)
         {
             this.PlotModelList[index].Data.Status = PlotStatus.NotIsAvai;
 
@@ -163,11 +166,11 @@ namespace Plots.Controller
             int lifetime = 0;
             int durationDeadline = 0;
 
-            List<ProductConfig> productConfigs = new List<ProductConfig>();
-            productConfigs = DataManager.Instance.GameConfig.ProductConfigList;
-            foreach (ProductConfig product in productConfigs)
+            List<ProductConf> productConfigs = new List<ProductConf>();
+            productConfigs = DataManager.Instance.ProductConfigData.ListProductConf;
+            foreach (ProductConf product in productConfigs)
             {
-                if (product.Name.ToString() == productType.ToString())
+                if (product.ProductType.Id == productType.Id)
                 {
                     interval = product.Interval;
                     lifetime = product.Lifetime;
@@ -288,7 +291,7 @@ namespace Plots.Controller
 
                 float deadlineDistance = (float)(DateTime.Parse(model.Data.Deadline) - DateTime.Now).TotalSeconds;
                 if (deadlineDistance < minDeadline &&
-                    deadlineDistance >= DataManager.Instance.GameConfig.WorkerConfig.TimeTask)
+                    deadlineDistance >= DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask)
                 {
                     minDeadline = deadlineDistance;
                     index = i;
@@ -420,7 +423,7 @@ namespace Plots.Controller
 
                 if (DateTime.Parse(tmpPlotModelList[idTask].Data.Deadline) < TimerForWorkerList[idWorker])
                 {
-                    return int.Parse(tmpPlotModelList[idTask].Data.Id);
+                    return tmpPlotModelList[idTask].Data.Id;
                 }
                 TimerForWorkerList[idWorker] = DateTime.Parse(tmpPlotModelList[idTask].Data.Deadline).AddSeconds(timeTask);
 
@@ -446,15 +449,15 @@ namespace Plots.Controller
                 }
 
                 // Harvest, Produce
-                if (plot.ProductType != ProductType.None)
+                if (plot.ProductType != null)
                 {
                     // Gán thông tin từ product config.
                     int indexProductConfig = DataManager.Instance.GetIdProductConfig(plot.ProductType);
                     if (indexProductConfig > 0)
                     {
-                        model.Interval = DataManager.Instance.GameConfig.ProductConfigList[indexProductConfig - 1].Interval;
-                        model.Lifetime = DataManager.Instance.GameConfig.ProductConfigList[indexProductConfig - 1].Lifetime;
-                        model.DurationDeadline = DataManager.Instance.GameConfig.ProductConfigList[indexProductConfig - 1].Deadline;
+                        model.Interval = DataManager.Instance.ProductConfigData.ListProductConf[indexProductConfig - 1].Interval;
+                        model.Lifetime = DataManager.Instance.ProductConfigData.ListProductConf[indexProductConfig - 1].Lifetime;
+                        model.DurationDeadline = DataManager.Instance.ProductConfigData.ListProductConf[indexProductConfig - 1].Deadline;
                     }
 
                     // Chưa có Worker
@@ -476,9 +479,11 @@ namespace Plots.Controller
                         if (DataManager.Instance.GameData.WorkerList[model.Data.WorkerId].State == WorkerState.Produce)
                         {
                             // Tính Deadline từ khi từ khi bắt đầu trồng đến khi phát triển xong và hết thời gian thu hoạch.
-                            BagController.Instance.CaculateProductAmountByName(DataManager.Instance.GameConfig.ProductConfigList[indexProductConfig - 1].Name, -1);
+                            BagController.Instance.CaculateProductAmountByName(DataManager.Instance.ProductConfigData.
+                                ListProductConf[indexProductConfig - 1].ProductType.Name, -1);
+
                             DateTime deadline = DateTime.Parse(DataManager.Instance.GameData.WorkerList[model.Data.WorkerId].StartTime);
-                            deadline = deadline.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                            deadline = deadline.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                             deadline = deadline.AddSeconds(model.Lifetime * model.Interval);
                             deadline = deadline.AddSeconds(model.DurationDeadline);
                             model.Data.Deadline = deadline.ToString();
@@ -488,7 +493,7 @@ namespace Plots.Controller
                         {
                             // Tính Deadline khi thu hoạch xong (hết TimeTask).
                             DateTime deadline = DateTime.Parse(DataManager.Instance.GameData.WorkerList[model.Data.WorkerId].StartTime);
-                            deadline = deadline.AddSeconds(DataManager.Instance.GameConfig.WorkerConfig.TimeTask);
+                            deadline = deadline.AddSeconds(DataManager.Instance.WorkerConfigData.WorkerConfig.TimeTask);
                             model.Data.Deadline = deadline.ToString();
                         }
                     }
